@@ -56,7 +56,7 @@ public class MyFrame extends JFrame implements ActionListener{
    
    public static void main(String[] args) {
       //MyFrame 객체 생성
-      new MyFrame("나의 프레임");
+      new MyFrame("나의 프레임5");
       System.out.println("main 메소드가 종료 됩니다.");
    }
 
