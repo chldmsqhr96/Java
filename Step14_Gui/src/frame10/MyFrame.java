@@ -7,7 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
+import javax.swing.JTextField; 
 
 public class MyFrame extends JFrame implements ActionListener{
    //필드
@@ -85,9 +85,8 @@ public class MyFrame extends JFrame implements ActionListener{
          if(num2 == 0) {
   		   JOptionPane.showMessageDialog(this, "어떤 수를 0으로 나눌 수 없습니다");
   		   return;
-  		   } else {
-  	         result=num1/num2;
   		   }
+  	       result=num1/num2;
       }
       //숫자를(double) 문자열(String) 로 바꾸기
       String resultText=Double.toString(result);
@@ -96,6 +95,5 @@ public class MyFrame extends JFrame implements ActionListener{
 	  } catch (NumberFormatException nfe) {
 		   JOptionPane.showMessageDialog(this, "숫자를 넣어주세요");
 	  }
-	  
    }
 }
