@@ -1,8 +1,9 @@
 package test.dao;
-
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import test.dto.MemberDto;
 import test.util.DBConnect;
 /*
@@ -11,18 +12,94 @@ import test.util.DBConnect;
  * - DB에 insert, update, delete, select 작업을 대신해주는 객체를 생성할 클래스 설계
  */
 public class MemberDao {
-	//회원의 정보를 저장하고 성공여부(true, false)를 리턴해주는 메소드
+	public MemberDto getData(int num){
+	    MemberDto dto = null;
+		//필요한 객체를 담을 지역변수 사전 생성
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			conn = new DBConnect().getConn();
+			
+			String sql = "SELECT num, name, addr"
+					   + " FROM members"
+					   + " WHERE num = ?";
+			
+			pstmt=conn.prepareStatement(sql);
+			pstmt.setInt(1, num);
+			
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				String name = rs.getString("name");
+				String addr = rs.getString("addr");
+			
+				dto=new MemberDto();
+				dto.setNum(num);
+				dto.setName(name);
+				dto.setAddr(addr);
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally { // 예외 여부와 상관없이 무조건 실행
+			try {
+				if(rs!=null)rs.close();
+				if(pstmt!=null)pstmt.close();
+				if(conn!=null)conn.close();
+			} catch (Exception e) {}
+		}
+		return dto;
+	}
+	
+	//전체 회원 정보를 리턴하는 메소드
+	public List<MemberDto> getList(){
+		//회원 정보를 누적할 객체 생성
+		List<MemberDto> list = new ArrayList<>();
+		
+		//필요한 객체를 담을 지역변수 사전 생성
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			//connection 객체 참조값 얻어오기
+			conn = new DBConnect().getConn();
+			
+			//실행할 sql문
+			String sql = "SELECT num, name, addr"
+					   + " FROM members"
+					   + " ORDER BY num desc";
+			
+			pstmt=conn.prepareStatement(sql);
+			//sql문이 미완성이면 여기서 완성
+			
+			rs = pstmt.executeQuery();
+			//반복문을 돌면서 ResultSet에 있는 row에 대한 정보를 추출
+			while(rs.next()) {
+				//커서가 존재하는 row에 있는 정보를 추출해서 사용
+				MemberDto dto = new MemberDto();
+				dto.setNum(rs.getInt("num"));
+				dto.setName(rs.getString("name"));
+				dto.setAddr(rs.getString("addr"));
+				//리스트에 입력된 정보를 추가
+				list.add(dto);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs!=null)rs.close();
+				if(pstmt!=null)pstmt.close();
+				if(conn!=null)conn.close();
+			} catch(Exception e) {}
+		}
+		//회원 정보가 누적된 list 객체의 참조값 리턴
+		return list;
+	}
+	
 	public boolean insert(MemberDto dto) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		
-	    try {
-		       Class.forName("oracle.jdbc.driver.OracleDriver");
-		       String url="jdbc:oracle:thin:@localhost:1521:xe";
-		       conn=DriverManager.getConnection(url, "scott", "tiger");
-		   	} catch (Exception e) {
-		       e.printStackTrace();
-		}
 		
 		//insert, update, delete 작업을 통해서 변화된 (추가, 수정, 삭제) row의 갯수를 담을 변수
 		int rowCount = 0;
@@ -57,14 +134,6 @@ public class MemberDao {
 	public boolean update(MemberDto dto) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		
-	    try {
-		       Class.forName("oracle.jdbc.driver.OracleDriver");
-		       String url="jdbc:oracle:thin:@localhost:1521:xe";
-		       conn=DriverManager.getConnection(url, "scott", "tiger");
-		   	} catch (Exception e) {
-		       e.printStackTrace();
-		}
 		
 		//insert, update, delete 작업을 통해서 변화된 (추가, 수정, 삭제) row의 갯수를 담을 변수
 		int rowCount = 0;
@@ -101,14 +170,6 @@ public class MemberDao {
 	public boolean delete(int num) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		
-	    try {
-		       Class.forName("oracle.jdbc.driver.OracleDriver");
-		       String url="jdbc:oracle:thin:@localhost:1521:xe";
-		       conn=DriverManager.getConnection(url, "scott", "tiger");
-		   	} catch (Exception e) {
-		       e.printStackTrace();
-		}
 		
 		int rowCount = 0;
 		
