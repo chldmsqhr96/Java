@@ -1,6 +1,5 @@
 package test.main;
 import java.util.Scanner;
-
 import test.dao.MemberDao;
 import test.dto.MemberDto;
 

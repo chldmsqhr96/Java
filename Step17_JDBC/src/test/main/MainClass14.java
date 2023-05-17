@@ -9,13 +9,14 @@ public class MainClass14 {
 		String name = "김구라";
 		String addr = "독산동";
 		
-		MemberDto dto = new MemberDto(num, name, addr);
-		
 		/*
+		MemberDto dto = new MemberDto();
 		dto.setNum(num);
 		dto.setName(name);
 		dto.setAddr(addr);
 		*/
+		
+		MemberDto dto = new MemberDto(num, name, addr);
 		
 		MemberDao m = new MemberDao();
 		boolean isSuccess = m.update(dto);

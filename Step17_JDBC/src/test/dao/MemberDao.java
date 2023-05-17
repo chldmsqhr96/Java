@@ -39,7 +39,6 @@ public class MemberDao {
 				dto.setName(name);
 				dto.setAddr(addr);
 			}
-			
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally { // 예외 여부와 상관없이 무조건 실행
@@ -55,6 +54,10 @@ public class MemberDao {
 	//전체 회원 정보를 리턴하는 메소드
 	public List<MemberDto> getList(){
 		//회원 정보를 누적할 객체 생성
+		/*
+		 MemberDto 클래스로 제네릭을 해주는 이유는, list가 MemberDto에 생성된 메소드의 인자들을
+		 사용할 것이기 때문임.
+		*/
 		List<MemberDto> list = new ArrayList<>();
 		
 		//필요한 객체를 담을 지역변수 사전 생성
@@ -68,7 +71,7 @@ public class MemberDao {
 			//실행할 sql문
 			String sql = "SELECT num, name, addr"
 					   + " FROM members"
-					   + " ORDER BY num desc";
+					   + " ORDER BY num ASC";
 			
 			pstmt=conn.prepareStatement(sql);
 			//sql문이 미완성이면 여기서 완성
