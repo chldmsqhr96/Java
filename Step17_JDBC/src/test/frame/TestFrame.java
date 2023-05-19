@@ -3,6 +3,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.util.List;
+
+import javax.security.auth.callback.ConfirmationCallback;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,6 +21,8 @@ public class TestFrame extends JFrame /* implements ActionListener */ {
 /*
 	JTextFiled inputName, inputAddr;
 */
+	DefaultTableModel model = null;
+	
 	public TestFrame(String title) {
 		super(title);
 		
@@ -31,6 +35,7 @@ public class TestFrame extends JFrame /* implements ActionListener */ {
 		JTextField inputAddr = new JTextField(10);
 		
 		JButton addBtn = new JButton("추가");
+		JButton deleteBtn = new JButton("삭제");
 		
 		//패널에 ui 배치
 		JPanel panel = new JPanel();
@@ -39,6 +44,7 @@ public class TestFrame extends JFrame /* implements ActionListener */ {
 		panel.add(label2);
 		panel.add(inputAddr);
 		panel.add(addBtn);
+		panel.add(deleteBtn);
 		
 		//패널째로 프레임의 북쪽에 위치
 		add(panel, BorderLayout.NORTH);
@@ -50,7 +56,7 @@ public class TestFrame extends JFrame /* implements ActionListener */ {
 		String[] colNames = {"번호","이름","주소"};
 		
 		//테이블에 연결할 모델 객체 생성
-		DefaultTableModel model = new DefaultTableModel(colNames, 0);
+		model = new DefaultTableModel(colNames, 0);
 		
 		//모델 객체를 테이블에 연결
 		table.setModel(model);
@@ -80,14 +86,31 @@ public class TestFrame extends JFrame /* implements ActionListener */ {
 			if(IsSuccess) {
 				JOptionPane.showMessageDialog(this, "저장했습니다.");
 			}
+			reset();
+		});
+		
+		deleteBtn.addActionListener((e)->{			
+			int SelectedRow = table.getSelectedRow();
+			if(SelectedRow == -1) {
+				JOptionPane.showMessageDialog(this, "삭제할 메세지를 선택해주세요.");
+				return;
+			}
 			
-			model.setRowCount(0);
+			int num = (int)model.getValueAt(SelectedRow, 0);
+			int tmp = JOptionPane.showConfirmDialog(this, "삭제 하시겠습니까?");
+
+			if(tmp == JOptionPane.YES_OPTION) {
+					
+				MemberDao m = new MemberDao();
+				boolean isSuccess = m.delete(num);	
 			
-			List<MemberDto> list2 = new MemberDao().getList();
-			
-			for(MemberDto tmp:list2) {
-				Object[] row = {tmp.getNum(), tmp.getName(), tmp.getAddr()};
-				model.addRow(row);
+				if(isSuccess) {
+					JOptionPane.showMessageDialog(this, "삭제됐습니다.");
+				}
+				reset();
+			} 
+			else {
+				reset();
 			}
 		});
 	}
@@ -121,4 +144,14 @@ public class TestFrame extends JFrame /* implements ActionListener */ {
          }
       }
 */
+	public void reset() {
+		model.setRowCount(0);
+		
+		List<MemberDto> list2 = new MemberDao().getList();
+		
+		for(MemberDto tmp:list2) {
+			Object[] row = {tmp.getNum(), tmp.getName(), tmp.getAddr()};
+			model.addRow(row);
+		}
+	}
 }
